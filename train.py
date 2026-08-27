@@ -5,7 +5,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 
 # Internal module imports
-from src.dataset import TranslationDataset, Vocab, get_collate_fn
+from src.dataset import TranslationDataset, get_collate_fn
 from src.models.lstm_seq2seq import Encoder, Decoder, Seq2Seq
 from src.models.lstm_with_luong_attention import Encoder_att, Decoder_att, Seq2Seq_att
 from src.models.transformer import Transformer
@@ -32,14 +32,17 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Starting training for model: {args.model} on device: {device}")
 
-    # --- 1. DATA AND VOCABULARY LOADING ---
-    # Load dataset dataframes and vocabularies here
-    # train_df = pd.read_csv('data/processed/train.csv')
-    # val_df = pd.read_csv('data/processed/val.csv')
-    # eng_vocab = ...
-    # ru_vocab = ...
+    import pickle
 
-    # --- 2. MODEL SELECTION AND PIPELINE EXECUTION ---
+    train_df = pd.read_csv("data/processed/train.csv")
+    val_df = pd.read_csv("data/processed/val.csv")
+
+    with open("data/processed/eng_vocab.pkl", "rb") as f:
+        eng_vocab = pickle.load(f)
+
+    with open("data/processed/ru_vocab.pkl", "rb") as f:
+        ru_vocab = pickle.load(f)
+    # Model selection
     if args.model == 'lstm':
         collate_fn = get_collate_fn(batch_first=False)
         train_dataset = TranslationDataset(train_df, eng_vocab, ru_vocab)
@@ -95,9 +98,18 @@ def main():
             src_pad_idx=2, trg_pad_idx=2
         ).to(device)
 
-        optimizer = torch.optim.AdamW(model.parameters(), lr=5e-4, weight_decay=0.01)
+        optimizer = torch.optim.AdamW(
+            model.parameters(),
+            lr=2e-4,
+            weight_decay=0.01
+        )
+
         scheduler = torch.optim.lr_scheduler.OneCycleLR(
-            optimizer, max_lr=2e-4, steps_per_epoch=len(train_loader), epochs=args.epochs, pct_start=0.1
+            optimizer,
+            max_lr=2e-4,
+            steps_per_epoch=len(train_loader),
+            epochs=args.epochs,
+            pct_start=0.1
         )
         criterion = nn.CrossEntropyLoss(ignore_index=2)
 
