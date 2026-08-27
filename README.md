@@ -1,4 +1,4 @@
-# Neural Machine Translation: LSTM Encoder - Decoder, Luong Attention and Transformer
+# Neural Machine Translation: LSTM, Luong Attention and Transformer
 
 ## Overview
 
@@ -8,7 +8,7 @@ This project presents a comparative study of three neural machine translation (N
 - LSTM Seq2Seq with Luong Attention
 - Transformer
 
-All models were implemented in **PyTorch** and evaluated on the same parallel corpus. The main objective is to compare their training behavior and translation quality using validation loss and BLEU score.
+All models were implemented in **PyTorch** and evaluated on the same parallel corpus. The main objective is to compare their training behavior and translation quality using validation loss and corpus-level BLEU score.
 
 ## Dataset
 
@@ -70,6 +70,12 @@ An encoder–decoder Transformer implemented in PyTorch.
 | Weight decay | `0.01` |
 | LR schedule | OneCycle |
 
+## Evaluation
+
+Translation quality is evaluated using **corpus-level BLEU** from NLTK. Before scoring, reference and hypothesis sentences are converted to lowercase and tokenized using whitespace splitting.
+
+BLEU is used as the main metric for this study. It provides a simple and reproducible basis for comparing the three models, but it does not provide a comprehensive evaluation of machine translation quality.
+
 ## Results
 
 All models were trained for **5 epochs**.
@@ -80,7 +86,9 @@ All models were trained for **5 epochs**.
 | LSTM + Luong Attention | **8.67** |
 | Transformer | **16.18** |
 
-The Transformer achieved the highest validation BLEU, outperforming both recurrent architectures. Luong Attention provided a smaller but measurable improvement over the basic LSTM model.
+Under the selected experimental configurations, the Transformer achieved the highest validation BLEU. Luong Attention provided a smaller but measurable improvement over the basic LSTM model.
+
+The models were not explicitly matched by parameter count or computational complexity. Therefore, these results should be interpreted as a comparison of the selected implementations and configurations rather than a controlled comparison of architectures at equal model capacity.
 
 ### Training Curves
 
@@ -189,12 +197,10 @@ python infer.py
 
 ## Conclusion
 
-Under the conditions of this experiment, the results show a clear difference between the evaluated architectures:
+Under the selected experimental configurations, the results show a clear difference in validation BLEU:
 
 **LSTM → LSTM + Luong Attention → Transformer**
 
-with final validation BLEU scores of:
-
 **7.97 → 8.67 → 16.18**
 
-The Transformer produced the strongest translation quality, while the addition of Luong Attention improved the recurrent baseline.
+The Transformer achieved the highest score, while Luong Attention improved the recurrent baseline. Since the models were not controlled for equal parameter count or computational complexity, the results demonstrate the performance of these particular implementations rather than proving that one architecture is universally superior.
