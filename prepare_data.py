@@ -28,10 +28,14 @@ def prepare_data():
         print("Loading raw data from local path:", RAW_DATA_PATH)
         full_df = pd.read_csv(RAW_DATA_PATH)
 
-    train_full, test_df = train_test_split(full_df, test_size=0.05, random_state=42)
+    train_full, test_df = train_test_split(
+        full_df,
+        test_size=0.05,
+        random_state=42
+    )
 
     train_df = train_full.iloc[:300000]
-    val_df = test_df.iloc[:2000]
+    val_df = train_full.iloc[300000:302000]
 
 
     print("Building English and Russian vocabularies")
