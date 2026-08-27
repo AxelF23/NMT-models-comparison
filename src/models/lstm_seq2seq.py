@@ -1,3 +1,7 @@
+import random
+import torch
+import torch.nn as nn
+
 class Encoder(nn.Module):
   """
     LSTM - based encoder
@@ -51,7 +55,7 @@ class Seq2Seq(nn.Module):
     # src: [src_len, batch_size]
     # trg: [trg_len, batch_size]
     hidden, cell = self.encoder(src)
-    outputs = torch.zeros(trg.shape[0], trg.shape[1], self.decoder.fc_out.out_features).to(device)
+    outputs = torch.zeros(trg.shape[0], trg.shape[1], self.decoder.fc_out.out_features).to(self.device)
     input = trg[0] # [batch_size]
     for t in range(1,trg.shape[0]):
       output, hidden, cell = self.decoder(input, hidden, cell)
